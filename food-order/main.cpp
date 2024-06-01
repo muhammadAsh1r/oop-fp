@@ -261,4 +261,3 @@ int main()
     authentication(product);
 }
 
-
