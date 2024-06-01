@@ -3,8 +3,75 @@
 #include <string>
 #include <windows.h>
 #include <cstdlib>
+#include <sstream>
+#include <vector>
 
 using namespace std;
+
+class Product
+{
+    string name;
+    int quantity;
+    float price;
+public:
+    void add_product() {
+        string name;
+        cout << "Enter product name: ";
+        cin >> name;
+        cout << "Enter product price: ";
+        cin >> price;
+
+        ofstream product_file("products.txt", ios::app);
+        product_file << name << " " <<  price << endl;
+        product_file.close();
+
+        cout << "Product added successfully!" << endl;
+    }
+
+    vector<string> splitString(const string& input, char delimiter) {
+        vector<string> result;
+        stringstream ss(input);
+        string item;
+
+        while (getline(ss, item, delimiter)) {
+            result.push_back(item);
+        }
+
+        return result;
+    }
+
+    void delete_product() {
+        string name;
+        cout << "Enter product name to delete: ";
+        cin >> name;
+
+        ifstream product_file("products.txt");
+        ofstream temp_file("temp.txt");
+
+        string line;
+        bool found = false;
+        while (getline(product_file, line)) {
+            vector<string> result = splitString(line, ' ');
+            if (result[0] != name) {
+                temp_file << line << endl;
+            } else {
+                found = true;
+            }
+        }
+
+        product_file.close();
+        temp_file.close();
+
+        remove("products.txt");
+        rename("temp.txt", "products.txt");
+
+        if (found) {
+            cout << "Product deleted successfully!" << endl;
+        } else {
+            cout << "Product not found!" << endl;
+        }
+    }
+};
 
 void clearConsole() {
     system("cls");
@@ -80,50 +147,9 @@ void user_login()
     }
 }
 
-void add_product() {
-    string product_name;
-    cout << "Enter product name: ";
-    cin >> product_name;
 
-    ofstream product_file("products.txt", ios::app);
-    product_file << product_name << endl;
-    product_file.close();
 
-    cout << "Product added successfully!" << endl;
-}
-
-void delete_product() {
-    string product_name;
-    cout << "Enter product name to delete: ";
-    cin >> product_name;
-
-    ifstream product_file("products.txt");
-    ofstream temp_file("temp.txt");
-
-    string line;
-    bool found = false;
-    while (getline(product_file, line)) {
-        if (line != product_name) {
-            temp_file << line << endl;
-        } else {
-            found = true;
-        }
-    }
-
-    product_file.close();
-    temp_file.close();
-
-    remove("products.txt");
-    rename("temp.txt", "products.txt");
-
-    if (found) {
-        cout << "Product deleted successfully!" << endl;
-    } else {
-        cout << "Product not found!" << endl;
-    }
-}
-
-void admin_menu() {
+void admin_menu(Product product) {
     while (true) {
         int choice;
         cout << "\n1. Add Product" << endl;
@@ -134,10 +160,10 @@ void admin_menu() {
 
         switch (choice) {
             case 1:
-                add_product();
+                product.add_product();
                 break;
             case 2:
-                delete_product();
+                product.delete_product();
                 break;
             case 3:
                 return;
@@ -147,7 +173,7 @@ void admin_menu() {
     }
 }
 
-void admin_login()
+void admin_login(Product product)
 {
     string user, password;
     bool user_is_valid = false, pass_is_valid = false;
@@ -193,7 +219,7 @@ void admin_login()
         {
             clearConsole();
             cout << "\nYou are logged in as " << user << endl;
-            admin_menu();
+            admin_menu(product);
             break;
         }
         else
@@ -204,7 +230,7 @@ void admin_login()
     }
 }
 
-void authentication()
+void authentication(Product product)
 {
     while(1)
     {
@@ -219,7 +245,7 @@ void authentication()
         }
         else if(choice == 1)
         {
-            admin_login();
+            admin_login(product);
         }
         else
         {
@@ -231,5 +257,8 @@ void authentication()
 
 int main()
 {
-    authentication();
+    Product product;
+    authentication(product);
 }
+
+
