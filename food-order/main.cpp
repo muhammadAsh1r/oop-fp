@@ -8,6 +8,18 @@
 
 using namespace std;
 
+vector<string> splitString(const string& input, char delimiter) {
+        vector<string> result;
+        stringstream ss(input);
+        string item;
+
+        while (getline(ss, item, delimiter)) {
+            result.push_back(item);
+        }
+
+        return result;
+    }
+
 class Product
 {
     string name;
@@ -80,6 +92,7 @@ public:
         while(getline(products, line))
         {
             vector<string> result = splitString(line, ' ');
+            cout << "\n***********************" << endl;
             cout << "Name: " << result[0] << endl;
             cout << "Price: " << result[1] << endl;
         }
@@ -92,9 +105,33 @@ void clearConsole() {
 
 void user_menu()
 {
-    string item;
-    cout << "Happy Shopping!\nEnter item you want to buy: ";
-    cin >> item;
+    cout << "Happy Shopping!" << endl;
+    while(1)
+    {
+        string item;
+        cout << "\nEnter item you want to buy: ";
+        cin >> item;
+
+        ifstream product_file("products.txt");
+        string line;
+        bool found = false;
+        while (getline(product_file, line)) {
+            vector<string> result = splitString(line, ' ');
+            if (result[0] == item) {
+                found = true;
+            }
+        }
+
+        if(found){
+            clearConsole();
+            cout << item << " purchased successfully!" << endl;
+            break;
+        }
+        else{
+            cout << "Invalid Input" << endl;
+            continue;
+        }
+    }
 }
 
 void disableEcho() {
@@ -114,11 +151,11 @@ void enableEcho() {
 void user_login(Product product)
 {
     string user, password;
-    bool user_is_valid = false, pass_is_valid = false;
-    int x = 0, i = 0;
 
     while(1)
     {
+        bool user_is_valid = false, pass_is_valid = false;
+        int x = 0, i = 0;
         cout << "Enter username: " ;
         cin >> user;
         cout << "Enter password: " ;
@@ -153,7 +190,7 @@ void user_login(Product product)
         }
 
 
-        if(i == x)
+        if(i == x && user_is_valid && pass_is_valid)
         {
             clearConsole();
             cout << "\nYou are logged in as " << user << endl;
