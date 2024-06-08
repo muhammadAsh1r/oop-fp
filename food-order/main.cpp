@@ -103,7 +103,7 @@ void clearConsole() {
     system("cls");
 }
 
-void user_menu()
+void user_menu(Product product)
 {
     cout << "Happy Shopping!" << endl;
     while(1)
@@ -137,7 +137,8 @@ void user_menu()
                 }
             }
             cout << item_name << " purchased successfully!" << endl;
-            break;
+            product.display_products();
+            continue;
         }
         else{
             cout << "Invalid Input" << endl;
@@ -210,7 +211,7 @@ void user_login(Product product)
             current_user.close();
             cout << "\nYou are logged in as " << user << endl;
             product.display_products();
-            user_menu();
+            user_menu(product);
             break;
         }
         else
@@ -332,3 +333,4 @@ int main()
     Product product;
     authentication(product);
 }
+
