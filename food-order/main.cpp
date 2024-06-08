@@ -108,23 +108,35 @@ void user_menu()
     cout << "Happy Shopping!" << endl;
     while(1)
     {
-        string item;
+        string item_name;
         cout << "\nEnter item you want to buy: ";
-        cin >> item;
+        cin >> item_name;
 
         ifstream product_file("products.txt");
         string line;
         bool found = false;
         while (getline(product_file, line)) {
             vector<string> result = splitString(line, ' ');
-            if (result[0] == item) {
+            if (result[0] == item_name) {
                 found = true;
             }
         }
 
+        ofstream sold_history("sold_history.txt", ios::app);
         if(found){
             clearConsole();
-            cout << item << " purchased successfully!" << endl;
+            string cu;
+            ifstream product_file("products.txt");
+            ifstream current_user("current_user.txt");
+            current_user >> cu;
+            while (getline(product_file, line)) {
+                vector<string> result = splitString(line, ' ');
+                if(result[0] == item_name) {
+                    sold_history << result[0] << " " << result[1] << " " << cu << endl;
+                    sold_history.close();
+                }
+            }
+            cout << item_name << " purchased successfully!" << endl;
             break;
         }
         else{
@@ -193,6 +205,9 @@ void user_login(Product product)
         if(i == x && user_is_valid && pass_is_valid)
         {
             clearConsole();
+            ofstream current_user("current_user.txt");
+            current_user << user;
+            current_user.close();
             cout << "\nYou are logged in as " << user << endl;
             product.display_products();
             user_menu();
@@ -317,4 +332,3 @@ int main()
     Product product;
     authentication(product);
 }
-
