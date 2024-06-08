@@ -71,10 +71,30 @@ public:
             cout << "Product not found!" << endl;
         }
     }
+
+    void display_products()
+    {
+        string line;
+        ifstream products("products.txt");
+
+        while(getline(products, line))
+        {
+            vector<string> result = splitString(line, ' ');
+            cout << "Name: " << result[0] << endl;
+            cout << "Price: " << result[1] << endl;
+        }
+    }
 };
 
 void clearConsole() {
     system("cls");
+}
+
+void user_menu()
+{
+    string item;
+    cout << "Happy Shopping!\nEnter item you want to buy: ";
+    cin >> item;
 }
 
 void disableEcho() {
@@ -91,7 +111,7 @@ void enableEcho() {
     SetConsoleMode(hStdin, mode | ENABLE_ECHO_INPUT);
 }
 
-void user_login()
+void user_login(Product product)
 {
     string user, password;
     bool user_is_valid = false, pass_is_valid = false;
@@ -137,6 +157,8 @@ void user_login()
         {
             clearConsole();
             cout << "\nYou are logged in as " << user << endl;
+            product.display_products();
+            user_menu();
             break;
         }
         else
@@ -146,8 +168,6 @@ void user_login()
         }
     }
 }
-
-
 
 void admin_menu(Product product) {
     while (true) {
@@ -215,7 +235,7 @@ void admin_login(Product product)
         }
 
 
-        if(i == x)
+        if(i == x && user_is_valid && pass_is_valid)
         {
             clearConsole();
             cout << "\nYou are logged in as " << user << endl;
@@ -241,7 +261,7 @@ void authentication(Product product)
         cin >> choice;
         if(choice == 2)
         {
-            user_login();
+            user_login(product);
         }
         else if(choice == 1)
         {
